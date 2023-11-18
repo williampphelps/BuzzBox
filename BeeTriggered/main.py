@@ -30,7 +30,7 @@ def compareConfigs(currentConfig, webdata):
 def restartDockerContainer():
     client = docker.from_env()
 
-    container = client.containers.get("beetriggered-opencanary-1")
+    container = client.containers.get("beetriggered_opencanary_1")
     container.restart()
 
 def checkIfBrandNew():
