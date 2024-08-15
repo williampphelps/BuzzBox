@@ -5,6 +5,7 @@ import docker
 import time
 import datetime
 import socket
+import logging
 
 PUBLIC_API_KEY = os.getenv('PUBLIC_API_KEY')
 SECRET_API_KEY = os.getenv('SECRET_API_KEY')
@@ -23,7 +24,7 @@ SOFTWARE_VERSION = '0.0.1'
 STARTUP_TIME = int(time.mktime(datetime.datetime.now().timetuple()) * 1000)
 
 def getCurrentConfig():
-    filename = 'test/.opencanary.conf'
+    filename = '/test/.opencanary.conf'
 
     with open(filename) as file:
         currentConfig = json.load(file)
@@ -47,8 +48,12 @@ def compareConfigs(currentConfig, webdata):
 def restartDockerContainer():
     client = docker.from_env()
 
-    container = client.containers.get("beetriggered-opencanary-1")
-    container.restart()
+    containers = client.containers.list(all=True)
+    for container in containers:
+        print(container.name)
+        if 'opencanary' in container.name:
+            print('Restarting Container')
+            client.containers.get(container.id).restart()
 
 def activate_machine(machine):
     machineConf = getCurrentConfig()
@@ -66,7 +71,7 @@ def activate_machine(machine):
     }
 
     print("New Online Config")
-    print(newMachine['config'])
+    # print(newMachine['config'])
 
     requests.put(CONSOLE_URL + '/api/machines/' + MACHINE_ID, json=newMachine, headers=REQUEST_HEADERS)
 

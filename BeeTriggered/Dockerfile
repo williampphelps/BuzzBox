@@ -4,6 +4,6 @@ RUN pip install --upgrade pip
 RUN pip install requests
 RUN pip install docker
 
-COPY . . 
+COPY . .
 CMD ["python", "-u", "main.py"]
 
